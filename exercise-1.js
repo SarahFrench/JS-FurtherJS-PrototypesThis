@@ -22,7 +22,7 @@ const animal = {
     if (this.hunger === 0){
       console.log(`${this.name} the ${this.species} isn't hungry!`);
     } else if (this.hunger > 0) {
-      console.log(`${this.name} the ${this.species} ate and isn't hungry anymore!`);
+      console.log(`${this.name} the ${this.species} was fed and isn't hungry anymore!`);
       this.hunger = 0;
     }
   }
@@ -60,7 +60,48 @@ const zoo = {
 };
 
 
-let zebra = herbivore;
-zebra.init("Zack", "zebra");
-zebra.hunger = 100;
+const animalCreator = {
+    createAnimal: function(name, speciesName, animalType) {
+        const animal = Object.create(animalType);
+        animal.type = animalType;
+        animal.init(name, speciesName);
+        return animal;
+    },
+
+    createZebra: function (name) {
+      const zebra = Object.create(herbivore);
+      zebra.type = "herbivore";
+      zebra.init(name, "zebra");
+      return zebra;
+    },
+
+    createChinchilla: function (name) {
+      const chinchilla = Object.create(herbivore);
+      chinchilla.type = "herbivore";
+      chinchilla.init(name, "chinchilla");
+      return chinchilla;
+    },
+
+    createLion: function (name) {
+      const lion = Object.create(carnivore);
+      lion.type = "carnivore";
+      lion.init(name, "lion");
+      return lion;
+    },
+
+    createFerret: function (name) {
+      const ferret = Object.create(carnivore);
+      ferret.type = "carnivore";
+      ferret.init(name, "ferret");
+      return ferret;
+    }
+};
+
+
+
+
+let zebra = animalCreator.createZebra("Zack");
+let ferret = animalCreator.createFerret("Fiona");
+
+zebra.hunger = 50;
 zebra.feedHerbivoreFood()

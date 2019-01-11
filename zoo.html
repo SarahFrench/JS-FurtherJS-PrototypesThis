@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>My Zoo</title>
+    <script src="./jquery-3.3.1.js"></script>
+  </head>
+  <body>
+    <h1>Zoo</h1>
+    <h3 id ="budget"></h3>
+    <div class = "animal_edit">
+      <h4>Add an animal:</h4>
+      <form id="animal_add_form">
+        <label for="name_field">Animal's name</label>
+        <input id="name_field" type="text" name="name">
+         <p>
+            <label>Select the species:</label>
+            <select id = "animal_type">
+              <option value = "zebra">Zebra</option>
+              <option value = "lion">Lion</option>
+              <option value = "chinchilla">Chinchilla</option>
+              <option value = "ferret">Ferret</option>
+            </select>
+         </p>
+      </form>
+      <button id = "submit">Add animal</button>
+    </div>
+
+    <h3>Zoo Inventory:</h3>
+    <table id = "inventory" border="1">
+      <tr id = "headings">
+        <th>Name</th>
+        <th>Animal Type</th>
+        <th>Species</th>
+        <th>Hunger Level</th>
+        <th>Feed</th>
+      </tr>
+
+    </table>
+    <script>
+      jQuery(document).ready( function(){
+        jQuery("#budget").text(`Zoo budget = £${zoo.cash}`)
+      })
+    </script>
+    <script>
+      const animal = {
+        name : "name",
+        species : "species",
+        hunger : 0,
+
+        init : function (name, species){
+          this.name = name;
+          this.species = species;
+        },
+
+        isHungry : function (){
+          if (this.hunger > 0){
+            console.log(`${this.name} the ${this.species} is hungry!`);
+            return true;
+          } else if (this.hunger === 0){
+            console.log(`${this.name} the ${this.species} is full!`);
+            return false;
+          }
+        },
+
+        feed : function () {
+          if (this.hunger === 0){
+            console.log(`${this.name} the ${this.species} isn't hungry!`);
+          } else if (this.hunger > 0) {
+            console.log(`${this.name} the ${this.species} was fed and isn't hungry anymore!`);
+            this.hunger = 0;
+          }
+        }
+      }
+
+      const herbivore = Object.create(animal);
+      herbivore.feedHerbivoreFood = function(food) {
+        if(!this.isHungry()){
+          this.feed();
+        } else {
+          this.feed();
+          zoo.spend(200);
+        }
+      }
+
+      const carnivore = Object.create(animal);
+      carnivore.feedCarnivoreFood = function(food) {
+        if(!this.isHungry()){
+          this.feed();
+        } else {
+          this.feed();
+          zoo.spend(500);
+        }
+      }
+
+      const zoo = {
+          cash: 4000,
+          spend: function (amount) {
+              if (this.cash < amount) {
+                  throw "Not enough money!";
+              }
+              this.cash -= amount;
+              console.log(`Remaining funds: ${this.cash}`);
+          },
+          inventory :[]
+      };
+
+      const animalCreator = {
+          createAnimal: function(name, speciesName, animalType) {
+              const animal = Object.create(animalType);
+              animal.type = animalType;
+              animal.init(name, speciesName);
+              return animal;
+          },
+
+          createZebra: function (name) {
+            const zebra = Object.create(herbivore);
+            zebra.type = "herbivore";
+            zebra.init(name, "zebra");
+            return zebra;
+          },
+
+          createChinchilla: function (name) {
+            const chinchilla = Object.create(herbivore);
+            chinchilla.type = "herbivore";
+            chinchilla.init(name, "chinchilla");
+            return chinchilla;
+          },
+
+          createLion: function (name) {
+            const lion = Object.create(carnivore);
+            lion.type = "carnivore";
+            lion.init(name, "lion");
+            return lion;
+          },
+
+          createFerret: function (name) {
+            const ferret = Object.create(carnivore);
+            ferret.type = "carnivore";
+            ferret.init(name, "ferret");
+            return ferret;
+          }
+      };
+
+      jQuery(document).ready(function() {
+        jQuery("#submit").click(function() {
+          let name = jQuery("#name_field").val();
+          name = name.replace(/\s+/g, '');
+          let animalType = jQuery("#animal_type").val();
+          switch(animalType){
+            case "zebra" :
+              console.log(animalCreator.createZebra(name));
+              zoo.inventory.push(animalCreator.createZebra(name))
+              break;
+
+            case "lion" :
+              console.log(animalCreator.createLion(name));
+              zoo.inventory.push(animalCreator.createLion(name))
+              break;
+
+            case "chinchilla" :
+              console.log(animalCreator.createChinchilla(name));
+              zoo.inventory.push(animalCreator.createChinchilla(name))
+              break;
+          }
+
+          let el = document.createElement('tr');
+          el.innerHTML = `        <td>${zoo.inventory[(zoo.inventory.length)-1].name}</td>
+                  <td>${zoo.inventory[(zoo.inventory.length)-1].type}</td>
+                  <td>${zoo.inventory[(zoo.inventory.length)-1].species}</td>
+                  <td>${zoo.inventory[(zoo.inventory.length)-1].hunger}</td>
+                  <td><button id = "button_${zoo.inventory[(zoo.inventory.length)-1].name}">Feed ${zoo.inventory[(zoo.inventory.length)-1].name}</button></td>`;
+          jQuery("#inventory").append(el);
+
+
+        })
+      })
+      jQuery(document).ready(function() {
+        jQuery("#button_SarahFrench").click(function() {
+          console.log(zoo);
+          zoo.inventory.forEach(animal => {
+            console.log(animal)
+          })
+        })
+      });
+
+    </script>
+
+  </body>
+</html>
